@@ -1,0 +1,16 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<Responses>
+  <Response intent="hello">
+    <Text>Здравствуй, мой собеседник!</Text>
+    <Text>Приветствую тебя!</Text>
+    <Text>Добрый день.</Text>
+    <Text>Рада с вами побеседовать.</Text>
+  </Response>
+  <Response intent="can_program">
+    <Text>Я могу программировать совсем немного.</Text>
+  </Response>
+  <Response intent="">
+    <Text>Я вас не поняла.</Text>
+    <Text>Простите, мне вас плохо слышно.</Text>
+  </Response>
+</Responses>
