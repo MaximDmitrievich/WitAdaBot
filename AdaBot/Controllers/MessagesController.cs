@@ -1,61 +1,67 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 using System.Web.Http;
-using System.Web.Http.Description;
 using Microsoft.Bot.Connector;
-using Newtonsoft.Json;
-using com.valgut.libs.bots.Wit;
-using System.Text;
-using System.Xml.Linq;
+using AdaBot.Cognitive;
+using AdaBot.Dialogs;
+using AdaBot.Task;
+using Microsoft.Bot.Builder.Dialogs;
 
 namespace AdaBot
 {
     [BotAuthentication]
     public class MessagesController : ApiController
     {
-        /// <summary>
-        /// POST: api/Messages
-        /// Receive a message from a user and reply to it
-        /// </summary>
+        private AdaEmo ae = new AdaEmo();
+        private AdaVis av = new AdaVis();
+        private Random rnd;
+        private int num = 0;
+
         public async Task<HttpResponseMessage> Post([FromBody]Activity activity)
         {
             if (activity.Type == ActivityTypes.Message)
             {
+                num = (rnd = new Random()).Next(0, 2);
                 ConnectorClient connector = new ConnectorClient(new Uri(activity.ServiceUrl));
-                var wit = new WitClient("G6AM4AHSKKP4EQYJ35ZWJ723H5DDHTAX");
-                var msg = wit.Converse(activity.From.Id, activity.Text);
-                var intent = string.Empty; double conf = 0;
-                if (msg.entities["intent"]!=null)
+                if (activity.Attachments?.Any() == true)
                 {
-                    foreach(var z in msg.entities["intent"])
+                    if (activity.Attachments[0].ContentType[0] == 'i')
                     {
-                        if (z.confidence>conf)
+                        using (HttpClient client = new HttpClient())
                         {
-                            conf = z.confidence;
-                            intent = z.value.ToString();
+                            string resume = "";
+                            MemoryStream memtmp = new MemoryStream();
+                            Stream photo = await client.GetStreamAsync(activity.Attachments[0].ContentUrl);
+                            photo.CopyTo(memtmp);
+                            memtmp.Position = 0;
+                            string describe = await av.MakeSomeSummary(memtmp.NewStream());
+                            memtmp.Position = 0;
+                            string emotion = await ae.MakeAboveEmotion(memtmp.NewStream());
+                            if (emotion != "ничего не")
+                            {
+                                resume = "Хорошая картина! \n\n\u200CИнтересно. На ней я вижу как " + describe +
+                                         "\n\n\u200CЕще я тут вижу " + emotion;
+                            }
+                            else
+                            {
+                                resume = "Хорошая картина! \n\n\u200CИнтересно. Я здесь вижу " + describe;
+                            }
+                            Activity reply = activity.CreateReply(resume);
+                            await connector.Conversations.ReplyToActivityAsync(reply);
                         }
                     }
-                }
-                var doc = XDocument.Load(System.Web.HttpContext.Current.Request.MapPath("~/Responses.xml"));
-                var r = (from x in doc.Descendants("Response")
-                         where x.Attribute("intent").Value == intent
-                         select x).FirstOrDefault();
-                string res = "Я вас не понимаю...";
-                if (r!=null)
+                } else if (num == 1)
                 {
-                    var arr = (from x in r.Descendants("Text")
-                               select x.Value).ToArray();
-                    if (arr!=null && arr.Length>0)
-                    {
-                        var rnd = new Random();
-                        res = arr[rnd.Next(0, arr.Length)];
-                    }
-                } 
-                Activity reply = activity.CreateReply(res);
-                await connector.Conversations.ReplyToActivityAsync(reply);
+                    await Conversation.SendAsync(activity, () => new DialogTask());
+                } else
+                {
+                    await Conversation.SendAsync(activity, () => new DialogWit());
+                }
             }
             else
             {
@@ -69,23 +75,15 @@ namespace AdaBot
         {
             if (message.Type == ActivityTypes.DeleteUserData)
             {
-                // Implement user deletion here
-                // If we handle user deletion, return a real message
             }
             else if (message.Type == ActivityTypes.ConversationUpdate)
             {
-                // Handle conversation state changes, like members being added and removed
-                // Use Activity.MembersAdded and Activity.MembersRemoved and Activity.Action for info
-                // Not available in all channels
             }
             else if (message.Type == ActivityTypes.ContactRelationUpdate)
             {
-                // Handle add/remove from contact lists
-                // Activity.From + Activity.Action represent what happened
             }
             else if (message.Type == ActivityTypes.Typing)
             {
-                // Handle knowing tha the user is typing
             }
             else if (message.Type == ActivityTypes.Ping)
             {
