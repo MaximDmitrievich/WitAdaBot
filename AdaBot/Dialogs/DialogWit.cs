@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 using Microsoft.Bot.Builder.Dialogs;
@@ -11,7 +12,7 @@ using Microsoft.Bot.Framework.Builder.Witai.Models;
 namespace AdaBot.Dialogs
 {
     [Serializable]
-    [WitModel("")]
+    [WitModel("JN5CDHK5BWJYRJMII7P3K4ZLKVYKD4CK")]
     public class DialogWit : WitDialog<object>
     {
         [WitIntent("")]
@@ -33,6 +34,11 @@ namespace AdaBot.Dialogs
                 }
             }
             await context.PostAsync(res);
+            if ((new Random()).Next(0, 2) == 1)
+            {
+                await context.Forward(new DialogTask(), this.Over, context.Activity, CancellationToken.None);
+
+            }
         }
 
         [WitIntent("greeting")]
@@ -46,12 +52,27 @@ namespace AdaBot.Dialogs
         public async System.Threading.Tasks.Task CanProgram(IDialogContext context, WitResult result)
         {
             await context.PostAsync(IntentXAMLRead.Reading(result));
+            if ((new Random()).Next(0, 2) == 1)
+            {
+                await context.Forward(new DialogTask(), this.Over, context.Activity, CancellationToken.None);
+
+            }
         }
 
         [WitIntent("math")]
         public async System.Threading.Tasks.Task Math(IDialogContext context, WitResult result)
         {
             await context.PostAsync(IntentXAMLRead.Reading(result));
+            if ((new Random()).Next(0, 2) == 1)
+            {
+                await context.Forward(new DialogTask(), this.Over , context.Activity, CancellationToken.None);
+
+            }
+        }
+
+        public async System.Threading.Tasks.Task Over(IDialogContext context, IAwaitable<object> result)
+        {
+            context.Done(result);
         }
 
         [WitIntent("what")]

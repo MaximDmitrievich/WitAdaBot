@@ -63,10 +63,6 @@ namespace AdaBot
                             await connector.Conversations.ReplyToActivityAsync(reply);
                         }
                     }
-                } else if ((new Random()).Next(0, 2) == 1)
-                {
-                    await Conversation.SendAsync(activity, () => new DialogTask());
-
                 } else
                 {
                     await Conversation.SendAsync(activity, () => new DialogWit());
