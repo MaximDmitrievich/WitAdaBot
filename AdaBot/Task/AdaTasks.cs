@@ -17,11 +17,8 @@ namespace AdaBot.Task
         {
             Tasks = Helpers.GetTasks();
             Random rand = new Random();
-            if (rand.Next(0, 2) == 1)
-            {
-                Tasking = true;
-                Unreaded = true;
-            }
+            Tasking = true;
+            Unreaded = true;
             Number = rand.Next(0, Tasks.Count);
         }
         

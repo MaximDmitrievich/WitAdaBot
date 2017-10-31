@@ -6,27 +6,33 @@ using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 using System.Web.Http;
+using System.Xml.Linq;
 using Microsoft.Bot.Connector;
 using AdaBot.Cognitive;
 using AdaBot.Dialogs;
 using AdaBot.Task;
+using Autofac;
 using Microsoft.Bot.Builder.Dialogs;
+using Microsoft.Bot.Builder.Internals.Fibers;
+using Microsoft.Bot.Framework.Builder;
+using Microsoft.Bot.Framework.Builder.Witai.Dialogs;
+using Microsoft.Bot.Framework.Builder.Witai.Models;
 
 namespace AdaBot
 {
     [BotAuthentication]
     public class MessagesController : ApiController
     {
-        private AdaEmo ae = new AdaEmo();
-        private AdaVis av = new AdaVis();
-        private Random rnd;
-        private int num = 0;
+
+        private AdaEmo ae;
+        private AdaVis av;
 
         public async Task<HttpResponseMessage> Post([FromBody]Activity activity)
         {
+
+            
             if (activity.Type == ActivityTypes.Message)
             {
-                num = (rnd = new Random()).Next(0, 2);
                 ConnectorClient connector = new ConnectorClient(new Uri(activity.ServiceUrl));
                 if (activity.Attachments?.Any() == true)
                 {
@@ -39,8 +45,10 @@ namespace AdaBot
                             Stream photo = await client.GetStreamAsync(activity.Attachments[0].ContentUrl);
                             photo.CopyTo(memtmp);
                             memtmp.Position = 0;
+                            av = new AdaVis();
                             string describe = await av.MakeSomeSummary(memtmp.NewStream());
                             memtmp.Position = 0;
+                            ae = new AdaEmo();
                             string emotion = await ae.MakeAboveEmotion(memtmp.NewStream());
                             if (emotion != "ничего не")
                             {
@@ -55,9 +63,10 @@ namespace AdaBot
                             await connector.Conversations.ReplyToActivityAsync(reply);
                         }
                     }
-                } else if (num == 1)
+                } else if ((new Random()).Next(0, 2) == 1)
                 {
                     await Conversation.SendAsync(activity, () => new DialogTask());
+
                 } else
                 {
                     await Conversation.SendAsync(activity, () => new DialogWit());

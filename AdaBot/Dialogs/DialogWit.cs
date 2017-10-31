@@ -1,6 +1,9 @@
 ﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
+using System.Xml.Linq;
 using Microsoft.Bot.Builder.Dialogs;
+using Microsoft.Bot.Connector;
 using Microsoft.Bot.Framework.Builder.Witai;
 using Microsoft.Bot.Framework.Builder.Witai.Dialogs;
 using Microsoft.Bot.Framework.Builder.Witai.Models;
@@ -11,11 +14,25 @@ namespace AdaBot.Dialogs
     [WitModel("JN5CDHK5BWJYRJMII7P3K4ZLKVYKD4CK")]
     public class DialogWit : WitDialog<object>
     {
-        
         [WitIntent("")]
         public async System.Threading.Tasks.Task DoNotUnderstand(IDialogContext context, WitResult result)
         {
-            await context.PostAsync(IntentXAMLRead.Reading(result));
+            XDocument doc = XDocument.Load(System.Web.HttpContext.Current.Request.MapPath("~/Responses.xml"));
+            XElement r = (from x in doc.Descendants("Response")
+                          where x.Attribute("intent")?.Value == ""
+                          select x).FirstOrDefault();
+            string res = "Я вас не понимаю...";
+            if (r != null)
+            {
+                var arr = (from x in r.Descendants("Text")
+                           select x.Value).ToArray();
+                if (arr.Length > 0)
+                {
+                    Random rnd = new Random();
+                    res = arr[rnd.Next(0, arr.Length)];
+                }
+            }
+            await context.PostAsync(res);
         }
 
         [WitIntent("greeting")]
