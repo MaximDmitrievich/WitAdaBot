@@ -14,7 +14,7 @@ namespace AdaBot.Cognitive
 
         private bool _isEmotion;
 
-        private readonly string _emotionAPISubscriptionKey = "5591d8dc4e5b41ce9f92b04083a53b14";
+        private readonly string _emotionAPISubscriptionKey = "";
         
 
         public AdaEmo()
