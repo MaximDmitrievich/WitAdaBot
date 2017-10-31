@@ -8,7 +8,7 @@ using Microsoft.Bot.Framework.Builder.Witai.Models;
 namespace AdaBot.Dialogs
 {
     [Serializable]
-    [WitModel("JN5CDHK5BWJYRJMII7P3K4ZLKVYKD4CK")]
+    [WitModel("")]
     public class DialogWit : WitDialog<object>
     {
         
