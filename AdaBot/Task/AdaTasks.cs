@@ -12,6 +12,7 @@ namespace AdaBot.Task
         public bool Unreaded { get; set; }
         public int Number { get; set; }
         public List<TaskIn> Tasks;
+        public int times;
 
         public AdaTasks()
         {
@@ -20,6 +21,7 @@ namespace AdaBot.Task
             Tasking = true;
             Unreaded = true;
             Number = rand.Next(0, Tasks.Count);
+            times = 2;
         }
         
     }

@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System.Configuration;
+using System.IO;
 using System.Threading.Tasks;
 using Microsoft.ProjectOxford.Vision;
 using Microsoft.ProjectOxford.Vision.Contract;
@@ -13,7 +14,7 @@ namespace AdaBot.Cognitive
 
         private VisualFeature[] _visualFeatures;
 
-        private readonly string _visionAPISubscriptionString = "8ed69c4b8d82433aafde0f947360ff9e";
+        private readonly string _visionAPISubscriptionString = ConfigurationManager.AppSettings["VisionSubKey"];
 
         private bool _isVision;
 
@@ -61,7 +62,7 @@ namespace AdaBot.Cognitive
                 }
             }
             
-            return await Helpers.TranslateText(result, "ru", await Helpers.GetAuthenticationToken("6e32a3dbe36546b8ae02b31eeb2cd904"));
+            return await Helpers.TranslateText(result, "ru", await Helpers.GetAuthenticationToken(ConfigurationManager.AppSettings["TranslationSubKey"]));
         }
 
 

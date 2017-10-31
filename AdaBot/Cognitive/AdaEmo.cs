@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System.Configuration;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.ProjectOxford.Emotion;
@@ -14,8 +15,8 @@ namespace AdaBot.Cognitive
 
         private bool _isEmotion;
 
-        private readonly string _emotionAPISubscriptionKey = "5591d8dc4e5b41ce9f92b04083a53b14";
-        
+        private readonly string _emotionAPISubscriptionKey = ConfigurationManager.AppSettings["EmotionSubKey"];
+
 
         public AdaEmo()
         {
@@ -123,7 +124,7 @@ namespace AdaBot.Cognitive
                         break;
                 }
             }
-            return await Helpers.TranslateText(result, "ru", await Helpers.GetAuthenticationToken("6e32a3dbe36546b8ae02b31eeb2cd904"));
+            return await Helpers.TranslateText(result, "ru", await Helpers.GetAuthenticationToken(ConfigurationManager.AppSettings["TranslationSubKey"]));
         }
     }
 }

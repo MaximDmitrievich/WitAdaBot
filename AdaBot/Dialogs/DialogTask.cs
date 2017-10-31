@@ -45,9 +45,17 @@ namespace AdaBot.Dialogs
                 context.Done(result);
                 return;
             }
+            else if (tasks.times > 0)
+            {
+                reply = "Неверно. Но я могу подсказать. \n\n\u200C" + tasks.Tasks[tasks.Number].Explanation +
+                        "\n\n\u200CПопробуйте еще раз. В следующий раз будьте внимательнее";
+                tasks.times--;
+                await context.PostAsync(reply);
+            }
             else
             {
-                reply = "Неверно. Но я могу подсказать. \n\n\u200C" + tasks.Tasks[tasks.Number].Explanation + "\n\n\u200CВ следующий раз будь внимательнее";
+                reply = "Неверно. \n\n\u200CПравильный ответ: " + tasks.Tasks[tasks.Number].Answer.ToString() +
+                        "\n\n\u200CВ следующий раз будьте внимательнее";
                 await context.PostAsync(reply);
                 tasks.Tasking = false;
                 context.Done(result);
