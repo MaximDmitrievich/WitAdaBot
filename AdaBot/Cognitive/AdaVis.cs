@@ -13,7 +13,7 @@ namespace AdaBot.Cognitive
 
         private VisualFeature[] _visualFeatures;
 
-        private readonly string _visionAPISubscriptionString = "2295028c3869473a843d591702422de9";
+        private readonly string _visionAPISubscriptionString = "";
 
         private bool _isVision;
 
@@ -61,7 +61,7 @@ namespace AdaBot.Cognitive
                 }
             }
             
-            return await Helpers.TranslateText(result, "ru", await Helpers.GetAuthenticationToken("6e32a3dbe36546b8ae02b31eeb2cd904"));
+            return await Helpers.TranslateText(result, "ru", await Helpers.GetAuthenticationToken(""));
         }
 
 
