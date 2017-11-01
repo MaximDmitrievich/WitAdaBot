@@ -11,20 +11,7 @@ namespace AdaBot
     {
         public static string Reading(WitResult result, string intent)
         {
-        //    string intent = string.Empty;
-        //    double conf = 0;
             string res = string.Empty;
-        //    if (result.Entities["intent"] != null)
-        //    {
-        //        foreach (WitEntity z in result.Entities["intent"])
-        //        {
-        //            if (z.Confidence > conf)
-        //            {
-        //                conf = z.Confidence;
-        //                intent = z.Value;
-        //            }
-        //        }
-        //    }
             XDocument doc = XDocument.Load(System.Web.HttpContext.Current.Request.MapPath("~/Responses.xml"));
             XElement r = (from x in doc.Descendants("Response")
                           where x.Attribute("intent")?.Value == intent
